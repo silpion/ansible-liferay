@@ -4,7 +4,7 @@
   tags: liferay
   assert:
     that:
-      - liferay_version in [ '6.2.0-ce-ga1' ]
+      - liferay_version in [ '6.2.0-ce-ga1', '6.2-ce-ga2' ]
 
 - include_vars: "{{liferay_version}}.yml"
   tags: liferay
