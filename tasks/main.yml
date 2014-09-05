@@ -81,8 +81,8 @@
   unarchive:
     src={{ansible_data_path}}/{{liferay_bundle_archive}}
     dest={{liferay_base_dir}}
+    creates={{liferay_home_dir}}
   notify: service liferay restart
-  # TODO Only if {{liferay_home_dir}} does not exist.
 
 - name: change installation owner
   tags: liferay
