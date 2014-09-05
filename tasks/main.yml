@@ -35,6 +35,7 @@
     url={{liferay_download_base_url}}/{{liferay_bundle_archive}}
     dest={{ansible_data_path}}/{{liferay_bundle_archive}}
     mode=0644
+    sha256sum={{liferay_bundle_archive_shasum}}
 
 - name: download mysql connector
   tags: liferay
@@ -43,6 +44,7 @@
     url={{mysql_connector_download_base_url}}/{{mysql_connector_archive}}
     dest={{ansible_data_path}}/{{mysql_connector_archive}}
     mode=0644
+    sha256sum={{mysql_connector_archive_shasum}}
 
 - name: create system group
   tags: liferay

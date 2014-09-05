@@ -27,8 +27,9 @@ Role Variables
 * `liferay_service_group`: The group of the Liferay service process.
 * `liferay_system_users_access`: The list of users that should get read access to the Liferay installation.
 * `mysql_connector_version`: The version of the MySQL JDBC connector library.
-* `mysql_connector_archive`: The archive name of the MySQL JDBC connector library.
 * `mysql_connector_download_base_url`: The base URL for the download of the MySQL JDBC connector library.
+* `mysql_connector_archive`: The archive name of the MySQL JDBC connector library.
+* `mysql_connector_archive_shasum`: The checksum of the MySQL JDBC connector library archive.
 
 For default values see `defaults/main.yml`.
 
