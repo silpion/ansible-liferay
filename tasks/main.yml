@@ -127,10 +127,11 @@
   tags: liferay
   template:
     src=service.sh.j2
-    dest=/etc/init.d/{{liferay_service_name}}
+    dest=/etc/init/{{liferay_service_name}}.conf
     owner={{liferay_service_user}}
     group={{liferay_service_group}}
     mode=755
+  notify: service liferay restart
 
 - name: define service
   tags: liferay
@@ -138,3 +139,4 @@
     enabled=yes
     name={{liferay_service_name}}
     runlevel=3,5
+  notify: service liferay restart

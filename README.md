@@ -3,7 +3,11 @@ ansible-liferay
 
 Installs a Liferay Portal server (Tomcat bundle).
 
-This role currently only supports a MySQL database.
+Limitations
+-----------
+
+* This role currently only supports a MySQL database.
+* This role is currently only tested with Ubuntu. It will probably not run with other remote environments.
 
 Requirements
 ------------
