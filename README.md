@@ -13,10 +13,8 @@ Requirements
 Role Variables
 --------------
 
-* `liferay_download_base_url`: The base URL where to archive containing the Tomcat bundle of Liferay Portal server can be downloaded.
-* `liferay_bundle_archive`: The archive containing the Tomcat bundle of Liferay Portal server to be installed.
+* `liferay_version`: The version of the Liferay Portal server to be installed.
 * `liferay_base_dir`: The base directory for the Liferay Portal server installation(s).
-* `liferay_home_dir_name`: The name of the home directory for the Liferay Portal server installation.
 * `liferay_home_dir`: The home directory of the Liferay Portal server installation.
 * `liferay_tomcat_dir`: The Tomcat home directory of the current Liferay Portal server installation.
 * `liferay_autodeploy_dir`: The Liferay auto deploy directory for the extensions.

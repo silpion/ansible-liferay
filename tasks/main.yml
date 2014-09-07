@@ -1,5 +1,14 @@
 ---
 
+- name: verify version
+  tags: liferay
+  assert:
+    that:
+      - liferay_version in [ '6.2.0-ce-ga1' ]
+
+- include_vars: "{{liferay_version}}.yml"
+  tags: liferay
+
 - name: install unzip
   tags: liferay
   apt:
