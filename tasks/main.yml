@@ -1,34 +1,50 @@
 ---
 
+- name: verify version
+  tags: liferay
+  assert:
+    that:
+      - liferay_version in [ '6.2.0-ce-ga1', '6.2-ce-ga2' ]
+
+- include_vars: "{{liferay_version}}.yml"
+  tags: liferay
+
 - name: install unzip
   tags: liferay
   apt:
     state=latest
     pkg={{item}}
     update_cache=yes
+    cache_valid_time=3600
   with_items:
     - unzip
 
 - name: create download cache dir
   tags: liferay
-  sudo: false
   local_action: file
     state=directory
-    path={{ansible_cache_downloads}}
+    owner=0
+    group=0
+    mode=2777
+    path={{ansible_data_path}}
 
 - name: download bundle
   tags: liferay
-  sudo: false
+  sudo: no
   local_action: get_url
     url={{liferay_download_base_url}}/{{liferay_bundle_archive}}
-    dest={{ansible_cache_downloads}}/{{liferay_bundle_archive}}
+    dest={{ansible_data_path}}/{{liferay_bundle_archive}}
+    mode=0644
+    sha256sum={{liferay_bundle_archive_shasum}}
 
 - name: download mysql connector
   tags: liferay
-  sudo: false
+  sudo: no
   local_action: get_url
     url={{mysql_connector_download_base_url}}/{{mysql_connector_archive}}
-    dest={{ansible_cache_downloads}}/{{mysql_connector_archive}}
+    dest={{ansible_data_path}}/{{mysql_connector_archive}}
+    mode=0644
+    sha256sum={{mysql_connector_archive_shasum}}
 
 - name: create system group
   tags: liferay
@@ -65,10 +81,10 @@
 - name: install bundle
   tags: liferay
   unarchive:
-    src={{ansible_cache_downloads}}/{{liferay_bundle_archive}}
+    src={{ansible_data_path}}/{{liferay_bundle_archive}}
     dest={{liferay_base_dir}}
+    creates={{liferay_home_dir}}
   notify: service liferay restart
-  # TODO Only if {{liferay_home_dir}} does not exist.
 
 - name: change installation owner
   tags: liferay
@@ -84,7 +100,7 @@
 - name: copy mysql connector
   tags: liferay
   copy:
-    src={{ansible_cache_downloads}}/{{mysql_connector_archive}}
+    src={{ansible_data_path}}/{{mysql_connector_archive}}
     dest={{liferay_tomcat_dir}}/lib/ext
     owner={{liferay_service_user}}
     group={{liferay_service_group}}
@@ -113,10 +129,11 @@
   tags: liferay
   template:
     src=service.sh.j2
-    dest=/etc/init.d/{{liferay_service_name}}
+    dest=/etc/init/{{liferay_service_name}}.conf
     owner={{liferay_service_user}}
     group={{liferay_service_group}}
     mode=755
+  notify: service liferay restart
 
 - name: define service
   tags: liferay
@@ -124,3 +141,4 @@
     enabled=yes
     name={{liferay_service_name}}
     runlevel=3,5
+  notify: service liferay restart
