@@ -13,6 +13,9 @@ setgid {{ liferay_service_group }}
 env JAVA_HOME={{ java_home }}
 env CATALINA_HOME={{ liferay_tomcat_dir }}
 env CATALINA_BASE={{ liferay_tomcat_dir }}
+{% if liferay_enable_remote_debug %}
+env CATALINA_OPTS="-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n"
+{% endif %}
 
 script
  exec {{ liferay_tomcat_dir }}/bin/catalina.sh run
