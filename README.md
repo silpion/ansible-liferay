@@ -30,6 +30,7 @@ Role Variables
 * `mysql_connector_download_base_url`: The base URL for the download of the MySQL JDBC connector library.
 * `mysql_connector_archive`: The archive name of the MySQL JDBC connector library.
 * `mysql_connector_archive_shasum`: The checksum of the MySQL JDBC connector library archive.
+* `liferay_enable_remote_debug`: Enable/disable remote debugging for the Liferay Tomcat server.
 
 For default values see `defaults/main.yml`.
 
