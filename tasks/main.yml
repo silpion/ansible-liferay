@@ -1,14 +1,4 @@
 ---
-
-- name: verify version
-  tags: liferay
-  assert:
-    that:
-      - liferay_version in [ '6.2-ce-ga1', '6.2-ce-ga2' ]
-
-- include_vars: "versions/{{liferay_version}}.yml"
-  tags: liferay
-
 - name: install unzip
   tags: liferay
   apt:
@@ -18,6 +8,21 @@
     cache_valid_time=3600
   with_items:
     - unzip
+
+
+- name: Load version vars
+  tags: liferay
+  with_first_found:
+    - ../vars/versions/{{ liferay_version }}.yml
+    - ../vars/versions/default.yml
+  include_vars: "{{ item }}"
+
+- name: Assert version vars
+  tags: liferay
+  assert:
+    that:
+      - liferay_bundle_archive_shasum not in (None, "")
+
 
 - name: create download cache dir
   tags: liferay
