@@ -1,10 +1,16 @@
 ---
+# defaults file for ansible-liferay
 
+# The version to be installed
 liferay_version: 6.2-ce-ga2
 
 liferay_base_dir: /opt/liferay
-liferay_home_dir: "{{liferay_base_dir}}/liferay-portal-{{liferay_version}}"
-liferay_tomcat_dir: "{{liferay_home_dir}}/tomcat-7.0.42"
+
+# The home directory of the Liferay Portal installation
+liferay_home_dir_name: "liferay-portal-{{ liferay_version }}"
+liferay_home_dir: "{{liferay_base_dir}}/{{ liferay_home_dir_name }}"
+
+liferay_tomcat_dir: "{{liferay_home_dir}}/tomcat-{{ liferay_bundle_tomcat_version }}"
 
 liferay_autodeploy_dir: "{{liferay_home_dir}}/deploy"
 

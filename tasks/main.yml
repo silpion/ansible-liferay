@@ -1,50 +1,75 @@
 ---
-
-- name: verify version
+- name: Assert platform is supported
   tags: liferay
   assert:
     that:
-      - liferay_version in [ '6.2.0-ce-ga1', '6.2-ce-ga2' ]
+      - ansible_os_family in liferay_supported_platforms
 
-- include_vars: "{{liferay_version}}.yml"
+- name: Update apt package cache
   tags: liferay
-
-- name: install unzip
-  tags: liferay
+  when: ansible_os_family == 'Debian'
   apt:
-    state=latest
-    pkg={{item}}
     update_cache=yes
     cache_valid_time=3600
-  with_items:
-    - unzip
 
-- name: create download cache dir
+- name: Load OS dependant vars
   tags: liferay
-  local_action: file
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install required packages
+  tags: liferay
+  with_items: liferay_package_list
+  action: "{{ ansible_pkg_mgr }} state=installed name={{ item }}"
+
+
+- name: Load version vars
+  tags: liferay
+  with_first_found:
+    - ../vars/versions/{{ liferay_version }}.yml
+    - ../vars/versions/default.yml
+  include_vars: "{{ item }}"
+
+- name: Assert version vars
+  tags: liferay
+  assert:
+    that:
+      - liferay_download_base_url not in (None, "")
+      - liferay_bundle_archive not in (None, "")
+      - liferay_bundle_archive_shasum not in (None, "")
+      - liferay_bundle_tomcat_version not in (None, "")
+
+
+- include: local.yml
+  tags: liferay
+
+
+- name: Install remote ansible data path directory
+  tags: liferay
+  sudo: yes
+  file:
     state=directory
+    dest={{ remote_ansible_data_path }}
+
+- name: Copy Tomcat bundle
+  tags: liferay
+  sudo: yes
+  copy:
+    src={{ local_ansible_data_path }}/{{ liferay_bundle_archive }}
+    dest={{ remote_ansible_data_path }}/{{ liferay_bundle_archive }}
     owner=0
     group=0
-    mode=2777
-    path={{ansible_data_path}}
-
-- name: download bundle
-  tags: liferay
-  sudo: no
-  local_action: get_url
-    url={{liferay_download_base_url}}/{{liferay_bundle_archive}}
-    dest={{ansible_data_path}}/{{liferay_bundle_archive}}
     mode=0644
-    sha256sum={{liferay_bundle_archive_shasum}}
 
-- name: download mysql connector
+- name: Copy MySQL connector
   tags: liferay
-  sudo: no
-  local_action: get_url
-    url={{mysql_connector_download_base_url}}/{{mysql_connector_archive}}
-    dest={{ansible_data_path}}/{{mysql_connector_archive}}
+  sudo: yes
+  copy:
+    src={{ local_ansible_data_path }}/{{ mysql_connector_archive }}
+    dest={{ remote_ansible_data_path }}/{{ mysql_connector_archive }}
+    owner=0
+    group=0
     mode=0644
-    sha256sum={{mysql_connector_archive_shasum}}
+
 
 - name: create system group
   tags: liferay
@@ -81,10 +106,20 @@
 - name: install bundle
   tags: liferay
   unarchive:
-    src={{ansible_data_path}}/{{liferay_bundle_archive}}
+    src={{ remote_ansible_data_path }}/{{ liferay_bundle_archive }}
     dest={{liferay_base_dir}}
+    copy=no
     creates={{liferay_home_dir}}
   notify: service liferay restart
+
+- name: Apply Liferay home
+  tags: liferay
+  when:
+    - liferay_bundle_base_dir_name is defined
+    - liferay_bundle_base_dir_name not in (None, "")
+    - liferay_bundle_base_dir_name != liferay_home_dir_name
+  command: mv -f {{ liferay_base_dir }}/{{ liferay_bundle_base_dir_name }} {{ liferay_home_dir }}
+    creates={{liferay_home_dir}}
 
 - name: change installation owner
   tags: liferay
@@ -100,7 +135,7 @@
 - name: copy mysql connector
   tags: liferay
   copy:
-    src={{ansible_data_path}}/{{mysql_connector_archive}}
+    src={{ remote_ansible_data_path }}/{{ mysql_connector_archive }}
     dest={{liferay_tomcat_dir}}/lib/ext
     owner={{liferay_service_user}}
     group={{liferay_service_group}}
