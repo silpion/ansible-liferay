@@ -21,7 +21,10 @@
   tags: liferay
   assert:
     that:
+      - liferay_download_base_url not in (None, "")
+      - liferay_bundle_archive not in (None, "")
       - liferay_bundle_archive_shasum not in (None, "")
+      - liferay_bundle_tomcat_version not in (None, "")
 
 
 - include: local.yml
