@@ -1,13 +1,25 @@
 ---
-- name: install unzip
+- name: Assert platform is supported
   tags: liferay
+  assert:
+    that:
+      - ansible_os_family in liferay_supported_platforms
+
+- name: Update apt package cache
+  tags: liferay
+  when: ansible_os_family == 'Debian'
   apt:
-    state=latest
-    pkg={{item}}
     update_cache=yes
     cache_valid_time=3600
-  with_items:
-    - unzip
+
+- name: Load OS dependant vars
+  tags: liferay
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install required packages
+  tags: liferay
+  with_items: liferay_package_list
+  action: "{{ ansible_pkg_mgr }} state=installed name={{ item }}"
 
 
 - name: Load version vars
