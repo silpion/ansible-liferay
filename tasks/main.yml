@@ -93,8 +93,18 @@
   unarchive:
     src={{ remote_ansible_data_path }}/{{ liferay_bundle_archive }}
     dest={{liferay_base_dir}}
+    copy=no
     creates={{liferay_home_dir}}
   notify: service liferay restart
+
+- name: Apply Liferay home
+  tags: liferay
+  when:
+    - liferay_bundle_base_dir_name is defined
+    - liferay_bundle_base_dir_name not in (None, "")
+    - liferay_bundle_base_dir_name != liferay_home_dir_name
+  command: mv -f {{ liferay_base_dir }}/{{ liferay_bundle_base_dir_name }} {{ liferay_home_dir }}
+    creates={{liferay_home_dir}}
 
 - name: change installation owner
   tags: liferay
