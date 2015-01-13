@@ -24,32 +24,9 @@
       - liferay_bundle_archive_shasum not in (None, "")
 
 
-- name: create download cache dir
+- include: local.yml
   tags: liferay
-  local_action: file
-    state=directory
-    owner=0
-    group=0
-    mode=2777
-    path={{ansible_data_path}}
 
-- name: download bundle
-  tags: liferay
-  sudo: no
-  local_action: get_url
-    url={{liferay_download_base_url}}/{{liferay_bundle_archive}}
-    dest={{ansible_data_path}}/{{liferay_bundle_archive}}
-    mode=0644
-    sha256sum={{liferay_bundle_archive_shasum}}
-
-- name: download mysql connector
-  tags: liferay
-  sudo: no
-  local_action: get_url
-    url={{mysql_connector_download_base_url}}/{{mysql_connector_archive}}
-    dest={{ansible_data_path}}/{{mysql_connector_archive}}
-    mode=0644
-    sha256sum={{mysql_connector_archive_shasum}}
 
 - name: create system group
   tags: liferay
