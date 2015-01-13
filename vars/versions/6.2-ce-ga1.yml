@@ -10,3 +10,6 @@ liferay_bundle_archive_shasum: bbf67ac14ccab4c2e6234372afad63d03accc1b00eedc06d9
 
 # The name of the base directory in the Tomcat bundle archive
 liferay_bundle_base_dir_name: liferay-portal-6.2.0-ce-ga1
+
+# The version of the Tomcat that is bundled in the current Liferay Portal server installation
+liferay_bundle_tomcat_version: 7.0.42
