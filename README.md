@@ -34,6 +34,15 @@ Role Variables
 
 For default values see `defaults/main.yml`.
 
+### Variables defined for each version
+
+When using a Liferay Portal version, that is not predefined in this role (so far),
+the following variables must also be defined in the playbook:
+
+* `liferay_download_base_url`: The base URL for the download of the Tomcat bundle.
+* `liferay_bundle_archive`: The file name of the Tomcat bundle archive.
+* `liferay_bundle_archive_shasum`: The checksum of the Tomcat bundle archive.
+
 Dependencies
 ------------
 

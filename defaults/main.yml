@@ -1,5 +1,7 @@
 ---
+# defaults file for ansible-liferay
 
+# The version to be installed
 liferay_version: 6.2-ce-ga2
 
 liferay_base_dir: /opt/liferay
