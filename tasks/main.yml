@@ -28,6 +28,34 @@
   tags: liferay
 
 
+- name: Install remote ansible data path directory
+  tags: liferay
+  sudo: yes
+  file:
+    state=directory
+    dest={{ remote_ansible_data_path }}
+
+- name: Copy Tomcat bundle
+  tags: liferay
+  sudo: yes
+  copy:
+    src={{ local_ansible_data_path }}/{{ liferay_bundle_archive }}
+    dest={{ remote_ansible_data_path }}/{{ liferay_bundle_archive }}
+    owner=0
+    group=0
+    mode=0644
+
+- name: Copy MySQL connector
+  tags: liferay
+  sudo: yes
+  copy:
+    src={{ local_ansible_data_path }}/{{ mysql_connector_archive }}
+    dest={{ remote_ansible_data_path }}/{{ mysql_connector_archive }}
+    owner=0
+    group=0
+    mode=0644
+
+
 - name: create system group
   tags: liferay
   group:
@@ -63,7 +91,7 @@
 - name: install bundle
   tags: liferay
   unarchive:
-    src={{ansible_data_path}}/{{liferay_bundle_archive}}
+    src={{ remote_ansible_data_path }}/{{ liferay_bundle_archive }}
     dest={{liferay_base_dir}}
     creates={{liferay_home_dir}}
   notify: service liferay restart
@@ -82,7 +110,7 @@
 - name: copy mysql connector
   tags: liferay
   copy:
-    src={{ansible_data_path}}/{{mysql_connector_archive}}
+    src={{ remote_ansible_data_path }}/{{ mysql_connector_archive }}
     dest={{liferay_tomcat_dir}}/lib/ext
     owner={{liferay_service_user}}
     group={{liferay_service_group}}
