@@ -1,3 +1,9 @@
+# 0.3.1
+
+Marc Rohlfs (1):
+
+* Add empty default version configuration. It avoids an error when configuring versions that are not predefined and should have already been added when predefined versions were implemented.
+
 # 0.3
 
 Marc Rohlfs (9):
